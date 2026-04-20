@@ -1,5 +1,6 @@
 #include <string>
 #include "hello.hpp"
+#include <iomanip>
 using namespace std;
 #include <sstream>
 void Gradebook::add_student(string first_name, string last_name, string id) {
@@ -44,21 +45,36 @@ void Gradebook::add_grade(string id, string assignment, int grade ) {
 
 string Gradebook::report() {
  ostringstream out;
+    out << setprecision(3);
     out << "Last_Name,First_Name,Student_ID";
     for (int i = 0; i < assignments.size(); i++) {
         out <<"," <<assignments[i] ;
     }
+    out <<",Average";
     out << "\n";
     for (int i = 0; i < ids.size(); i++) {
         out <<last_names[i] <<"," << first_names[i] << "," << ids[i];
+        double points_earned = 0;
+        double points_possible=0;
         for (int j = 0; j < grades[i].size(); j++) {
             if (grades[i][j] == -1) {
                 out <<",N/A";
             }
             else{
                 out << "," << grades[i][j];
+
+                points_earned += grades[i][j];
+                points_possible += assignments_points[j];
             }
         }
+        if (points_possible==0) {
+            out <<",N/A";
+        }
+        else {
+            double avg = (points_earned / points_possible) *100.0;
+            out <<"," <<avg;
+        }
+
         out << "\n";
     }
     return out.str();
